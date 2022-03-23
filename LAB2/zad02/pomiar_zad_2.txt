@@ -1,0 +1,92 @@
+./test 'c' test1
+using library
+
+file: test1, length of the file: 68 lines, char: c
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000170000 seconds.
+
+using system
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000080000 seconds.
+
+
+
+
+./test 'a' test2
+using library
+
+file: test2, length of the file: 1 lines, char: a
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000140000 seconds.
+
+using system
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000050000 seconds.
+
+
+
+
+./test 'b' test3
+using library
+
+file: test3, length of the file: 0 lines, char: b
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000200000 seconds.
+
+using system
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000060000 seconds.
+
+
+
+
+./test 'x' test4
+using library
+
+file: test4, length of the file: 1 lines, char: x
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000160000 seconds.
+
+using system
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000050000 seconds.
+
+
+
+
+./test 'a' test5
+using library
+
+file: test5, length of the file: 71 lines, char: a
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000240000 seconds.
+
+using system
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000080000 seconds.
+
+
+
+
+./test 'a' test6
+using library
+
+file: test6, length of the file: 215 lines, char: a
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000160000 seconds.
+
+using system
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000060000 seconds.

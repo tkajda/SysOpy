@@ -1,0 +1,133 @@
+shared-Os-----------------------------------------
+./test create_table test0
+Array of size 1 allocated successfully
+number of files: 1 with total number of lines 0
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000400000 seconds.
+
+./test wc_files test4
+number of files: 1 with total number of lines 6300
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0003620000 seconds.
+
+./test remove_block test0 test1 test2 test3 test4
+Test deletes random file's data and replace it with random file from arg list several times
+number of files: 5 with total number of lines 6448
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0284090000 seconds.
+
+./test create_table test0 test1 test2
+Array of size 3 allocated successfully
+number of files: 3 with total number of lines 0
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000350000 seconds.
+
+./test wc_files test4 test4 test4 test4 test4 test4 test4 test4 test4 test4
+number of files: 10 with total number of lines 63000
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0027880000 seconds.
+
+./test remove_block test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
+Test deletes random file's data and replace it with random file from arg list several times
+number of files: 10 with total number of lines 5129
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0290150000 seconds.
+
+
+
+shared-O0-----------------------------------------
+./test create_table test0
+Array of size 1 allocated successfully
+number of files: 1 with total number of lines 0
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000350000 seconds.
+
+./test wc_files test4
+number of files: 1 with total number of lines 6300
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0003290000 seconds.
+
+./test remove_block test0 test1 test2 test3 test4
+Test deletes random file's data and replace it with random file from arg list several times
+number of files: 5 with total number of lines 6448
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0263850000 seconds.
+
+./test create_table test0 test1 test2
+Array of size 3 allocated successfully
+number of files: 3 with total number of lines 0
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000340000 seconds.
+
+./test wc_files test4 test4 test4 test4 test4 test4 test4 test4 test4 test4
+number of files: 10 with total number of lines 63000
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0026920000 seconds.
+
+./test remove_block test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
+Test deletes random file's data and replace it with random file from arg list several times
+number of files: 10 with total number of lines 5129
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0294800000 seconds.
+
+
+
+
+shared-O2-----------------------------------------
+./test create_table test0
+Array of size 1 allocated successfully
+number of files: 1 with total number of lines 0
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000720000 seconds.
+
+./test wc_files test4
+number of files: 1 with total number of lines 6300
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0004270000 seconds.
+
+./test remove_block test0 test1 test2 test3 test4
+Test deletes random file's data and replace it with random file from arg list several times
+number of files: 5 with total number of lines 6448
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0264480000 seconds.
+
+./test create_table test0 test1 test2
+Array of size 3 allocated successfully
+number of files: 3 with total number of lines 0
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000870000 seconds.
+
+./test wc_files test4 test4 test4 test4 test4 test4 test4 test4 test4 test4
+number of files: 10 with total number of lines 63000
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0026220000 seconds.
+
+./test remove_block test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
+Test deletes random file's data and replace it with random file from arg list several times
+number of files: 10 with total number of lines 5129
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0316630000 seconds.
+
+
+/*
+Dla różnych poziomów optymalizacji czas wykonania jest krótszy. W przypadku większych plików najlepiej zachowuje się flaga -O2, natomiast dla małych czas
+optymalizacji jest ponad dwukrotnie dłuższy od -O0.
+*/

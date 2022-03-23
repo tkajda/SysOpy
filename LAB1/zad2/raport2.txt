@@ -1,0 +1,39 @@
+./test create_table test0
+Array of size 1 allocated successfully
+number of files: 1 with total number of lines 0
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000330000 seconds.
+
+./test wc_files test4
+number of files: 1 with total number of lines 6300
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0003110000 seconds.
+
+./test remove_block test0 test1 test2 test3 test4
+Test deletes random file's data and replace it with random file from arg list several times
+number of files: 5 with total number of lines 6448
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0271580000 seconds.
+
+./test create_table test0 test1 test2
+Array of size 3 allocated successfully
+number of files: 3 with total number of lines 0
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0000450000 seconds.
+
+./test wc_files test4 test4 test4 test4 test4 test4 test4 test4 test4 test4
+number of files: 10 with total number of lines 63000
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0033020000 seconds.
+
+./test remove_block test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
+Test deletes random file's data and replace it with random file from arg list several times
+number of files: 10 with total number of lines 5129
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0307570000 seconds.

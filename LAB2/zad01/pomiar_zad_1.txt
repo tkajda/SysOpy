@@ -1,0 +1,38 @@
+./test test1 test2
+
+files: test1 test2
+Using library
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0001680000 seconds.
+
+Using system functions
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0004950000 seconds.
+
+./test test3 test4
+
+files: test3 test4
+Using library
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0001460000 seconds.
+
+Using system functions
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0006110000 seconds.
+
+./test test5 test6
+
+files: test5 test6
+Using library
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0002490000 seconds.
+
+Using system functions
+User time: 0.0000000000
+System time: 0.0000000000
+CPU time: 0.0020250000 seconds.
