@@ -1,0 +1,1 @@
+CMakeLists.txt not found in /home/tomasz/SysOpy/LAB3 Select CMakeLists.txt
