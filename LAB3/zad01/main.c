@@ -1,5 +1,5 @@
 //
-// Created by tomasz on 23.03.2022.
+// Created by Tomasz Kajda on 23.03.2022.
 //
 #include <stdlib.h>
 #include <stdio.h>
@@ -10,9 +10,8 @@
 int main(int argc, char** argv) {
 
     if (argc!=2) exit(1);
-
-    int n = atoi(argv[1]);
-
+    char * endptr;
+    long n = strtol(argv[1], &endptr, 10);
 
     for (int i = 0; i < n; i++) {
         pid_t pid = fork();
@@ -28,7 +27,6 @@ int main(int argc, char** argv) {
         else {
             int j;
             pid = wait(&j);
-            printf("Received %d\n", WEXITSTATUS(j));
         }
 
     }
