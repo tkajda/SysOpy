@@ -2,11 +2,10 @@ CC = gcc -Wall -std=c11 -ggdb
 
 main: clean
 	$(CC) main.c -o main
-	./main
+	./main 50
 
 tests:
 	./test ..
-	./test ../..
 
 
 clean:
