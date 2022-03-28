@@ -1,14 +1,20 @@
 //
-// Created by tomasz on 25.03.2022.
+// Created by Tomasz Kajda on 25.03.2022.
 //
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/types.h>
+#include <time.h>
+#include <sys/times.h>
 #include <sys/wait.h>
+
+
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 #define MAX 32
+
+
 
 long double  f(long double  x) {
     long double  aod = pow(x,2.0);
@@ -29,6 +35,8 @@ int main(int argc, char**argv) {
 
     if (argc!=3) exit(1);
 
+    clock_t start = clock();
+
     char * endptr;
     long n = strtol(argv[2], &endptr, 10);
 
@@ -37,13 +45,13 @@ int main(int argc, char**argv) {
     long double  x1 = 0;
     long double  x2 = x1+width;
 
-    for(int i = 0; i<n; i++){
+    for(long i = 0; i<n; i++){
 
         pid_t child_pid;
         child_pid = fork();
         if (child_pid == 0) {
             char fileName[MAX];
-            snprintf(fileName,MAX,"../zad02/result%d.txt",i+1);
+            snprintf(fileName,MAX,"../zad02/result%li.txt",i+1);
             FILE* fptr = fopen(fileName,"w");
             fprintf(fptr, "%Lf", surface(x1,x2));
             fclose(fptr);
@@ -57,17 +65,18 @@ int main(int argc, char**argv) {
         wait(NULL);
 
     long double S = 0, buff;
-    for(int i=0;i<n;i++){
+    for(long i=0;i<n;i++){
         char fileName[MAX];
-        snprintf(fileName,MAX,"../zad02/result%d.txt",i+1);
+        snprintf(fileName,MAX,"../zad02/result%li.txt",i+1);
         FILE* fptr = fopen(fileName,"r");
         fscanf(fptr,"%Lf",&buff);
         fclose(fptr);
         S += buff;
     }
-
-    printf("%.15Lf", S);
-
+    clock_t end = clock();
+    printf("liczba plikow = %li\n", n);
+    printf("dokladnosc = %.15Lf\n", M_PI-S);
+    printf("time: %.10li seconds.\n\n", (end-start));
 
     return 0;
 }

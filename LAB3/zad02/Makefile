@@ -1,17 +1,24 @@
-CC = gcc -Wall -std=c11 -ggdb
+CC = gcc -Wall -std=gnu99 -ggdb
 
 main: clean
 	$(CC) main.c -o main -lm
-	./main 0.1 10
+	make tests
 
 tests:
-	./main 0.1 5000
-	./main 0.1 15000
-	./main 0.1 20000
-	./main 0.1 25000
+	./main 0.0002 5000
 	make clean
+	./main 0.00006666666 15000
+	make clean
+	./main 0.00005882352 17000
+	make clean
+	./main 0.00005681818 17600
+	make clean
+	make cleanmain
 
 
 
 clean:
-	rm -f main *.o *.a *.so *.txt
+	rm -f *.o *.a *.so *.txt
+
+cleanmain:
+	rm main
