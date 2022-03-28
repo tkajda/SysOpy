@@ -8,18 +8,19 @@
 #include <sys/wait.h>
 #include <math.h>
 
-double f(double x) {
-    double aod = pow(x,2.0);
+#define MAX 32
+
+long double  f(long double  x) {
+    long double  aod = pow(x,2.0);
     return 4/(aod + 1);
 }
 
-double surface(double x0, double x1) {
+long double  surface(double x0, double x1) {
     if (x1>1) {
         x1 = 1;
     }
 
-    double mid = x1 + (x1-x0)/2;
-
+    long double  mid = x1 + (x1-x0)/2;
     return f(mid)*(x1-x0);
 }
 
@@ -31,19 +32,42 @@ int main(int argc, char**argv) {
     char * endptr;
     long n = strtol(argv[2], &endptr, 10);
 
-    double width = 1/(double)n;
+    long double  width = 1/(long double )n;
 
+    long double  x1 = 0;
+    long double  x2 = x1+width;
 
-    double S = 0;
-    double x1 = 0;
-    double x2 = x1+width;
+    for(int i = 0; i<n; i++){
 
-    while (x2 < 1) {
-        S += surface(x1,x2);
+        pid_t child_pid;
+        child_pid = fork();
+        if (child_pid == 0) {
+            char fileName[MAX];
+            snprintf(fileName,MAX,"../zad02/result%d.txt",i+1);
+            FILE* fptr = fopen(fileName,"w");
+            fprintf(fptr, "%Lf", surface(x1,x2));
+            fclose(fptr);
+            exit(0);
+        }
+
         x1 += width;
         x2 += width;
     }
-    printf("%.15f", S);
+    for(int i=0;i<n;i++)
+        wait(NULL);
+
+    long double S = 0, buff;
+    for(int i=0;i<n;i++){
+        char fileName[MAX];
+        snprintf(fileName,MAX,"../zad02/result%d.txt",i+1);
+        FILE* fptr = fopen(fileName,"r");
+        fscanf(fptr,"%Lf",&buff);
+        fclose(fptr);
+        S += buff;
+    }
+
+    printf("%.15Lf", S);
+
 
     return 0;
 }
