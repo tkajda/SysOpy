@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
     int start_depth = -1;
 
     searchDir(path,str,start_depth,MAXLEVEL);
-//    while(wait(NULL));
+    while(wait(NULL));
 }
 
 
