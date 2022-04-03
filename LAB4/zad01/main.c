@@ -7,9 +7,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <unistd.h>
-#include <sys/wait.h>
 #include <string.h>
-#include <time.h>
 
 void handle_sigusr1(int sig) {
     usleep(50000);
@@ -24,7 +22,6 @@ void funcForChild() {
 
 int main(int argc, char** argv) {
 
-    printf("%s\n", argv[1]);
     char * status = argv[1];
 
     if (strcmp(status,"ignore")==0) {
@@ -76,5 +73,7 @@ int main(int argc, char** argv) {
     else {
         execl("./child", "./child", status, NULL);
     }
+    sleep(1);
+    printf("\n\n");
     return 0;
 } 
