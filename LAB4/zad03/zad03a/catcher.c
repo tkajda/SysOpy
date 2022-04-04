@@ -17,9 +17,13 @@ char* mode;
 
 void handler(int sig, siginfo_t *info, void *ucontext) {
 //    printf("HANDLED\n");
-
+    printf("%d\n", sig);
     if(sig==SIGUSR1) {
         counter++;
+    }
+    else if(sig==SIGUSR2) {
+        printf("received %d signals\n", counter);
+        exit(0);
     }
     int senderPID = info->si_pid;
 
@@ -50,14 +54,10 @@ int main(int argc, char** argv) {
     sigset_t mask;
     sigfillset(&mask);
     sigdelset(&mask,SIGUSR1);
-
-
-
-
-
-
+    sigdelset(&mask,SIGUSR2);
 
     sigaction(SIGUSR1, &sa, NULL);
+    sigaction(SIGUSR2, &sa, NULL);
 
     if (!(argc<3 || strcmp(argv[2], "kill") != 0 || strcmp(argv[2], "SIGRT") != 0 ||
             strcmp(argv[2], "SIGQUEUE") != 0 ) ){
@@ -82,11 +82,11 @@ int main(int argc, char** argv) {
         if (sigprocmask(SIG_BLOCK,&mask,NULL) < 0) {
             exit(EXIT_FAILURE);
         }
-        for (int i = 0 ; i < atoi(argv[1])-1 ;i++) {
-            pause();
+        for (int i = 0 ; i < atoi(argv[1])/2 ;i++) {
+            usleep(3);
         }
-
-        printf("%d\n", counter);
+//        sleep(2);
+//        printf("%d\n", counter);
 
 
     }

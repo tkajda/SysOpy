@@ -3,7 +3,7 @@ CC = gcc -Wall -std=c11 -ggdb
 main: clean
 	$(CC) catcher.c -o main
 	$(CC) sender.c -o sender
-	./main 100 kill
+	./main 1000 kill
 
 
 clean:

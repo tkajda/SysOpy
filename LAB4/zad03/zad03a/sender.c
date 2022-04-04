@@ -34,14 +34,12 @@ int main(int argc, char** argv) {
 
     int i = 0;
     while (i < n) {
-        usleep(5000);
         kill(catcherPID, SIGUSR1);
-//        printf("i=%d\n", i);
-        kill(catcherPID, SIGUSR2);
         i++;
     }
-    printf("done");
-    kill(SIGKILL,catcherPID);
+//    printf("done");
+
+    kill(catcherPID,SIGUSR2);
     exit(0);
 
 }
