@@ -16,7 +16,7 @@ char* mode;
 
 
 void handler(int sig, siginfo_t *info, void *ucontext) {
-//    printf("HANDLED\n");
+
     printf("%d\n", sig);
     if(sig==SIGUSR1) {
         counter++;
@@ -27,15 +27,20 @@ void handler(int sig, siginfo_t *info, void *ucontext) {
     }
     int senderPID = info->si_pid;
 
-//    printf("%d", counter);
-    if (strcpy(mode,"kill")==0) {
+    if (strcmp(mode,"kill")==0) {
         kill(senderPID, SIGUSR2);
     }
-    else if (strcpy(mode,"sigqueue")==0) {
-        kill(senderPID, SIGUSR2);
+    else if (strcmp(mode,"sigrt")==0) {
+        int rSignal = SIGRTMIN + 1;
+//        int rSingal2 = SIGRTMIN +2;
+        kill(senderPID, rSignal);
     }
-    else if (strcpy(mode,"sigrt")==0) {
-        kill(senderPID, SIGUSR2);
+    else if (strcmp(mode,"sigqueue")==0) {
+        union sigval value;
+        value.sival_ptr = NULL;
+        for(int sig_ctr = 0; sig_ctr < senderPID; sig_ctr++)
+            sigqueue(info->si_pid, SIGUSR1, value);
+        sigqueue(info->si_pid, SIGUSR2, value);
     }
 
 
@@ -58,6 +63,7 @@ int main(int argc, char** argv) {
 
     sigaction(SIGUSR1, &sa, NULL);
     sigaction(SIGUSR2, &sa, NULL);
+    mode = argv[2];
 
     if (!(argc<3 || strcmp(argv[2], "kill") != 0 || strcmp(argv[2], "SIGRT") != 0 ||
             strcmp(argv[2], "SIGQUEUE") != 0 ) ){
@@ -65,7 +71,6 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
 
-    mode = argv[2];
 
     printf("\ncatcher, pid: %d\n", getpid());
 
@@ -83,14 +88,11 @@ int main(int argc, char** argv) {
             exit(EXIT_FAILURE);
         }
         for (int i = 0 ; i < atoi(argv[1])/2 ;i++) {
-            usleep(3);
+            usleep(500000);
         }
 //        sleep(2);
 //        printf("%d\n", counter);
-
-
     }
-
     //    sigaction(SIGUSR1, &act2, NULL);
     return 0;
 
