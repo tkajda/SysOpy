@@ -27,7 +27,7 @@ int main(int argc, char**argv) {
             printf("signal is not pending\n");
         }
 
-        usleep(50000);
+        sleep(1);
     }
     return 0;
 

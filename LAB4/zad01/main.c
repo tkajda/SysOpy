@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <string.h>
 
-void handle_sigusr1(int sig) {
+void handle_sigusr1() {
     usleep(50000);
     fflush(NULL);
     printf("signal handled in proccess %d\n", getpid());
@@ -73,6 +73,7 @@ int main(int argc, char** argv) {
     else {
         execl("./child", "./child", status, NULL);
     }
+
     sleep(1);
     printf("\n\n");
     return 0;
