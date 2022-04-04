@@ -11,7 +11,7 @@
 
 
 void handle(int sig, siginfo_t *info, void *ucontext) {
-    printf("SIEMA");
+//    printf("CZESC\n");
 }
 
 
@@ -27,17 +27,21 @@ int main(int argc, char** argv) {
     int n = atoi(argv[1]);
 //    char* mode = argv[3];
 
-    struct sigaction act2;
-    act2.sa_flags = SA_SIGINFO;
-    act2.sa_sigaction = handle;
-    sigemptyset(&act2.sa_mask);
+    struct sigaction sa;
+    sa.sa_flags = SA_SIGINFO;
+    sa.sa_sigaction = handle;
+    sigaction(SIGUSR2, &sa, NULL);
 
     int i = 0;
     while (i < n) {
-        sleep(1);
+        usleep(5000);
         kill(catcherPID, SIGUSR1);
+//        printf("i=%d\n", i);
+        kill(catcherPID, SIGUSR2);
         i++;
     }
+    printf("done");
+    kill(SIGKILL,catcherPID);
     exit(0);
 
 }
