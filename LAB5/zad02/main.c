@@ -64,6 +64,8 @@ int main(int argc, char** argv) {
             printf("%s", line);
             line = calloc(MAX,sizeof(char));
         }
+        pclose(fp);
+
         free(line);
         free(command);
     }
