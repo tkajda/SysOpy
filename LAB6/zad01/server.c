@@ -53,7 +53,7 @@ void send_to_client(int client_id, msg_t *msg) {
         fprintf(stderr, "Client %d does not exist\n", client_id);
         return;
     }
-    if (msgsnd(clients[client_id].qid, msg,MAX_MESSAGE_SIZE, 0)== -1) {
+    if (msgsnd(clients[client_id].qid, msg,MAX_MESSAGE_SIZE, 0)== -1 && clients[client_id].qid != INACTIVE) {
         fprintf(stderr, "Cannot send message to %d\n", client_id);
     }
 }
@@ -65,11 +65,11 @@ void handler_init(msg_t *msg) {
 
     int client_id = -1;
 
-    printf("client key: %d\n ", client_key);
     for (int i = 0; i < MAX_NO_CLIENTS; ++i) {
         if (clients[i].qid == INACTIVE) {
             clients_number++;
             client_id = i;
+            clients[i].qid = client_id;
             break;
         }
         if (i == MAX_NO_CLIENTS) {
@@ -78,16 +78,17 @@ void handler_init(msg_t *msg) {
         }
     }
 
+    printf("client id: %d\n", client_id);
+
     if(client_id != -1) {
         if ((clients[client_id].qid = msgget(client_key, 0)) == -1) {
-            perror("Server unable to establish client server_qid");
+            perror("Server unable to establish client id");
         }
 
         msg_t new_client_msg;
         new_client_msg.type = INIT;
         new_client_msg.id = client_id;
         send_to_client(client_id, &new_client_msg);
-
     }
     else {
         fprintf(stderr, "Unable to register another client\n");
@@ -137,6 +138,7 @@ void handle_sigint() {
     printf("Server disconnected!\n");
     exit(EXIT_SUCCESS);
 }
+
 
 void handler_stop(msg_t *msg)
 {
@@ -192,6 +194,7 @@ void delete_queue() {
     msgctl(server_qid, IPC_RMID, NULL);
 }
 
+
 void init() {
     atexit(delete_queue);
 
@@ -227,7 +230,7 @@ int main() {
             perror("Server unable to receive message");
             continue;
         }
-//        update_log(&msg);
+        update_log(&msg);
         switch(msg.type) {
             case INIT:
                 handler_init(&msg);
@@ -243,9 +246,6 @@ int main() {
                 break;
             case TOONE:
                 handler_2one(&msg);
-                break;
-            default:
-                fprintf(stderr, "Server received invalid msg type: %ld\n", msg.type);
                 break;
         }
     }

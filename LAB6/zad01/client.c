@@ -23,16 +23,12 @@ key_t my_key;
 int client_qid;
 int id;
 
-void handle_sigint() {
-    printf("SIGNAL HANDLED\n");
-}
-
-
 
 
 void stop() {
     raise(SIGINT);
 }
+
 
 void send_to_server(msg_t *msg) {
     msg->timestamp = time(NULL);
@@ -43,11 +39,13 @@ void send_to_server(msg_t *msg) {
 
 int create_user_queue() {
 
-    my_key = ftok("HOME", getpid() % 'D');
+    my_key = ftok(getenv("HOME"), getpid()% 'Z');
+
 
     if ((client_qid = msgget(my_key, IPC_CREAT | IPC_EXCL | 0777))==-1) {
         perror("Cannot open clients queue\n");
     }
+
 
     msg_t msg;
     msg.type = INIT;
@@ -72,21 +70,21 @@ void delete_queue() {
     msg.id = id;
     sprintf(msg.text, " ");
     printf("Client disconnected\n");
-
     send_to_server(&msg);
-
-
     msgctl(client_qid, IPC_RMID, NULL);
-
 
 }
 
 
-
+void handle_sigint() {
+    delete_queue();
+}
 
 
 int open_server_queue() {
+
     key_t key = ftok(getenv("HOME"), 1);
+
     if (key == -1) {
         perror("Cannot generate server key");
         exit(EXIT_FAILURE);
@@ -101,8 +99,7 @@ void handle_shutdown() {
 }
 
 
-void init()
-{
+void init() {
     atexit(delete_queue);
     signal(SIGINT, handle_sigint);
 
