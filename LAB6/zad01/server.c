@@ -53,7 +53,7 @@ void send_to_client(int client_id, msg_t *msg) {
         fprintf(stderr, "Client %d does not exist\n", client_id);
         return;
     }
-    if (msgsnd(clients[client_id].qid, msg, -100, 0)== -1) {
+    if (msgsnd(clients[client_id].qid, msg,MAX_MESSAGE_SIZE, 0)== -1) {
         fprintf(stderr, "Cannot send message to %d\n", client_id);
     }
 }
@@ -61,10 +61,11 @@ void send_to_client(int client_id, msg_t *msg) {
 
 void handler_init(msg_t *msg) {
 
-    key_t client_key;
-    sscanf(msg->text, "%d", &client_key);
+    key_t client_key = atoi(msg->text);
 
     int client_id = -1;
+
+    printf("client key: %d\n ", client_key);
     for (int i = 0; i < MAX_NO_CLIENTS; ++i) {
         if (clients[i].qid == INACTIVE) {
             clients_number++;

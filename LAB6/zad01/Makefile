@@ -1,5 +1,5 @@
 
-all:
+all: clean
 	make server
 	make client
 
