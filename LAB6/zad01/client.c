@@ -57,7 +57,7 @@ int create_user_queue() {
         perror("Cannot receive id from server");
         exit(EXIT_FAILURE);
     }
-
+    id = msg.id;
     printf("You are client number %d\n", msg.id);
 
 }
@@ -69,10 +69,9 @@ void delete_queue() {
     msg.type = STOP;
     msg.id = id;
     sprintf(msg.text, " ");
-    printf("Client disconnected\n");
     send_to_server(&msg);
     msgctl(client_qid, IPC_RMID, NULL);
-
+    exit(EXIT_SUCCESS);
 }
 
 
@@ -148,68 +147,70 @@ void handle_msg() {
 }
 
 
-// TODO
-void handler_2all_send(char *text)
-{
-    printf("Client wants to send broadcast message!\n");
-    printf("----------\n%s\n----------\n", text);
+void send_toall(char *text) {
+    printf("Message sent to all clients!\n");
+    printf("%s\n", text);
+
     msg_t msg;
     msg.type = TOALL;
     msg.id = id;
+
     sprintf(msg.text, "%s", text);
+
     send_to_server(&msg);
 }
 
-void handler_2one_send(char *id_and_text)
-{
+
+// TODO
+
+
+void send_toone(char *send_to, char* text) {
+
     msg_t msg;
     msg.type = TOONE;
     msg.id = id;
+    msg.to_id = atoi(send_to);
+    strcpy(msg.text, text);
 
-    char delim[] = " ";
-    char *text = strpbrk(id_and_text, delim);
-    bool empty_text = text == NULL;
-    char *id_and_text_tmp = id_and_text;
-    strtok_r(id_and_text, delim, &id_and_text_tmp);
-
-    msg.to_id = atoi(id_and_text);
-    if(!empty_text)
-        sprintf(msg.text, "%s", text+1);
-
-    printf("Client wants to send direct message to id -> %d\n", msg.to_id);
-    printf("----------\n%s\n----------\n", msg.text);
-
+    printf("Message sent to %d\n", msg.to_id);
+    printf("\n%s\n", msg.text);
     send_to_server(&msg);
 }
 
 
-void handler_list()
-{
+void handler_list() {
+
     msg_t msg;
     msg.type = LIST;
     msg.id = id;
     sprintf(msg.text, "");
     send_to_server(&msg);
+
 }
 
-void sender_handler_cmd(char *command, char *text)
-{
 
-    if(strcmp("STOP", command) == 0)
-    {
+void sender_handler_cmd(char *command, char *text) {
+
+    if(strcmp("STOP", command) == 0) {
         stop();
+        printf("Client disconnected\n");
+
     }
-    else if(strcmp("LIST", command) == 0)
-    {
+    else if(strcmp("LIST", command) == 0) {
         handler_list();
     }
-    else if(strcmp("2ALL", command) == 0)
-    {
-        handler_2all_send(text);
+    else if(strcmp("2ALL", command) == 0) {
+
+        send_toall( text);
+
     }
-    else if(strcmp("2ONE", command) == 0)
-    {
-        handler_2one_send(text);
+    else if(strcmp("2ONE", command) == 0) {
+
+        char *receiver = strtok(text, " ");
+
+        char *message = strtok(NULL, " ");
+
+        send_toone(receiver, message);
     }
 }
 
@@ -234,20 +235,16 @@ int main() {
         char *cmd = strtok_r(line_cpy, " \n", &line_tmp);
 
         char *text_tmp = strtok_r(NULL, "\n", &line_tmp);
-        if (text_tmp == NULL)
-        {
+        if (text_tmp == NULL) {
             text[0] = '\0';
         }
-        else
-        {
+        else {
             strcpy(text, text_tmp);
         }
-        if (cmd == NULL)
-        {
+        if (cmd == NULL) {
             command[0] = '\0';
         }
-        else
-        {
+        else {
             strcpy(command, cmd);
         }
         sender_handler_cmd(command, text);

@@ -135,8 +135,7 @@ void handle_sigint() {
 }
 
 
-void handler_stop(msg_t *msg)
-{
+void handler_stop(msg_t *msg) {
     int client_id = msg->id;
     if(clients[client_id].qid == -1) {
         perror("Client inactive");
@@ -161,6 +160,7 @@ void handler_list(msg_t *msg) {
 
 
 void handler_2all(msg_t *msg) {
+
     for(int id = 0; id < MAX_NO_CLIENTS; id++) {
         if(clients[id].qid != INACTIVE && id != msg->id) {
             msgsnd(clients[id].qid, msg,MAX_MESSAGE_SIZE, 0);
@@ -172,6 +172,8 @@ void handler_2all(msg_t *msg) {
 void handler_2one(msg_t *msg) {
     int sender_id = msg->id;
     int receiver_id = msg->to_id;
+
+
 
     if(sender_id >= MAX_NO_CLIENTS || clients[receiver_id].qid == INACTIVE || sender_id == receiver_id) {
         fprintf(stderr, "Unable to send this message!\n");
