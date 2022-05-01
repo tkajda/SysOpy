@@ -18,8 +18,7 @@
 #define BUFSIZE 128
 #define INACTIVE -1
 
-typedef struct client_t
-{
+typedef struct client_t {
     int qid;
 } client_t;
 
@@ -28,7 +27,6 @@ FILE* file;
 const char* filename = "server_log.txt";
 int server_qid;
 int clients_number = 0;
-
 
 
 int open_server_queue() {
@@ -102,7 +100,7 @@ void update_log(msg_t *msg) {
     char log[MAX_BUFF_SIZE];
     sprintf(log, "TYPE %2ld   TIME: %16s\n"
                  "TEXT: %5s\n"
-                 "sender_id: %2d\n\n",
+                 "sender_id: %2d\n\n\n\n",
                  msg->type, asctime(localtime(&t)),
                  msg->text,
                  msg->id);
@@ -110,9 +108,6 @@ void update_log(msg_t *msg) {
         fprintf(file, "%s", log);
 
 }
-
-
-
 
 
 void handle_sigint() {

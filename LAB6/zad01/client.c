@@ -120,13 +120,10 @@ int is_empty(int qid) {
     return buf.msg_qnum == 0;
 }
 
-void handle_2all(msg_t *msg) {
-    printf("handled 2all\n");
 
-}
-
-void handle_2one(msg_t *msg) {
-    printf("handled 2one\n");
+void handle_messege_received(msg_t *msg) {
+    printf("You have received message from %d\n", msg->id);
+    printf("Message:\n%s\n\n", msg->text);
 }
 
 
@@ -137,10 +134,10 @@ void handle_msg() {
         if(msgrcv(client_qid, &msg, MAX_MESSAGE_SIZE, -100, IPC_NOWAIT) != -1) {
             switch(msg.type) {
                 case TOALL:
-                    handle_2all(&msg);
+                    handle_messege_received(&msg);
                     break;
                 case TOONE:
-                    handle_2one(&msg);
+                    handle_messege_received(&msg);
                     break;
                 case SHUTDOWN:
                     handle_shutdown();
@@ -151,7 +148,73 @@ void handle_msg() {
 }
 
 
+// TODO
+void handler_2all_send(char *text)
+{
+    printf("Client wants to send broadcast message!\n");
+    printf("----------\n%s\n----------\n", text);
+    msg_t msg;
+    msg.type = TOALL;
+    msg.id = id;
+    sprintf(msg.text, "%s", text);
+    send_to_server(&msg);
+}
 
+void handler_2one_send(char *id_and_text)
+{
+    msg_t msg;
+    msg.type = TOONE;
+    msg.id = id;
+
+    char delim[] = " ";
+    char *text = strpbrk(id_and_text, delim);
+    bool empty_text = text == NULL;
+    char *id_and_text_tmp = id_and_text;
+    strtok_r(id_and_text, delim, &id_and_text_tmp);
+
+    msg.to_id = atoi(id_and_text);
+    if(!empty_text)
+        sprintf(msg.text, "%s", text+1);
+
+    printf("Client wants to send direct message to id -> %d\n", msg.to_id);
+    printf("----------\n%s\n----------\n", msg.text);
+
+    send_to_server(&msg);
+}
+
+
+void handler_list()
+{
+    msg_t msg;
+    msg.type = LIST;
+    msg.id = id;
+    sprintf(msg.text, "");
+    send_to_server(&msg);
+}
+
+void sender_handler_cmd(char *command, char *text)
+{
+
+    if(strcmp("STOP", command) == 0)
+    {
+        stop();
+    }
+    else if(strcmp("LIST", command) == 0)
+    {
+        handler_list();
+    }
+    else if(strcmp("2ALL", command) == 0)
+    {
+        handler_2all_send(text);
+    }
+    else if(strcmp("2ONE", command) == 0)
+    {
+        handler_2one_send(text);
+    }
+}
+
+
+//END TODO
 
 int main() {
 
@@ -159,6 +222,35 @@ int main() {
 
     while(1) {
         handle_msg();
+
+        char line[MAX_BUFF_SIZE];
+        char command[MAX_BUFF_SIZE];
+        char text[MAX_BUFF_SIZE];
+        fgets(line, MAX_COMMAND_LEN, stdin);
+        char line_cpy[256];
+        strcpy(line_cpy, line);
+
+        char *line_tmp = line_cpy;
+        char *cmd = strtok_r(line_cpy, " \n", &line_tmp);
+
+        char *text_tmp = strtok_r(NULL, "\n", &line_tmp);
+        if (text_tmp == NULL)
+        {
+            text[0] = '\0';
+        }
+        else
+        {
+            strcpy(text, text_tmp);
+        }
+        if (cmd == NULL)
+        {
+            command[0] = '\0';
+        }
+        else
+        {
+            strcpy(command, cmd);
+        }
+        sender_handler_cmd(command, text);
 
 
     }
