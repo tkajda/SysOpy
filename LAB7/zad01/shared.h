@@ -23,6 +23,22 @@
 #define TABLE_SIZE 5
 #define OVEN_SIZE 5
 
+#define PATHNAME getenv("HOME")
+
+typedef struct sembuf sembuf;
+
+
+typedef struct {
+    int capacity[TABLE_SIZE];
+    int last_taken ;
+} table;
+
+typedef struct {
+    int capacity[OVEN_SIZE];
+    int last_taken;
+
+} oven;
+
 
 
 
