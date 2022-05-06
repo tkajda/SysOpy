@@ -73,6 +73,7 @@ void place_in_oven() {
 
     oven->pizzas[oven->last_taken%OVEN_SIZE] = pizza_type;
     oven->last_taken ++;
+    sleep(4);
 
     sembuf *load_oven1 = calloc(1, sizeof(sembuf));
     load_oven1->sem_num = 0;
@@ -102,6 +103,7 @@ void place_on_table() {
     table->is_taken[table->last_taken%TABLE_SIZE] = 1;
     table->pizzas[table->last_taken%TABLE_SIZE] = pizza_type;
     table->last_taken ++;
+
 
     sembuf *load_table1 = calloc(1, sizeof(sembuf));
     load_table1->sem_num = 1;
@@ -134,11 +136,8 @@ int main() {
     set_semaphores();
 
 
-    int iterations = 0;
-
-    while(iterations<3) {
+    while(1) {
         place_in_oven();
-        sleep(4);
         place_on_table();
     }
 

@@ -1,5 +1,5 @@
 //
-// Created by tomasz on 05.05.22.
+// Created by tomasz on 06.05.22.
 //
 #include "shared.h"
 
@@ -12,58 +12,14 @@ pid_t deliverymen_pids[DELIVERYMEN];
 
 
 void set_semaphores() {
-    key_t sem_key = ftok(PATHNAME, 'S');
 
-    if ((semaphore_id = semget(sem_key, 2, IPC_CREAT | 0666))==-1) {
-        perror("cannot create semaphore");
-        exit(EXIT_FAILURE);
-    }
-    union semun table_arg, oven_arg;
-    table_arg.val = TABLE_SIZE;
-    oven_arg.val = OVEN_SIZE;
 
-    //oven semaphore
-    if (semctl(semaphore_id, 0, SETVAL, oven_arg) == -1) {
-        perror("cannot initialize oven semaphore");
-        exit(EXIT_FAILURE);
-    }
-
-    //table semaphore
-    if (semctl(semaphore_id, 1, SETVAL, table_arg) == -1) {
-        perror("cannot initialize table semaphore");
-        exit(EXIT_FAILURE);
-    }
 
 }
 
 
 void create_shared_memory() {
 
-    //table block
-    key_t table_key = ftok(PATHNAME, 'T');
-    if (table_key == -1) {
-        perror("Cannot generate key\n");
-        exit(EXIT_FAILURE);
-    }
-
-
-    if ((table_id = shmget(table_key, sizeof(table), IPC_CREAT | 0666)) == -1 ){
-        perror("Cannot create shared memory\n");
-        exit(EXIT_FAILURE);
-    }
-
-    //oven block
-    key_t oven_key = ftok(PATHNAME, 'O');
-    if (oven_key == -1) {
-        perror("Cannot generate key\n");
-        exit(EXIT_FAILURE);
-    }
-
-
-    if ((oven_id = shmget(oven_key, sizeof(oven), IPC_CREAT | 0666)) == -1 ){
-        perror("No permission to use the semaphore\n");
-        exit(EXIT_FAILURE);
-    }
 
 }
 
@@ -76,9 +32,8 @@ void handle_sigint() {
     for (int j = 0; j < DELIVERYMEN; j++){
         kill(deliverymen_pids[j], SIGINT);
     }
-    semctl(semaphore_id, 0, IPC_RMID, NULL);
-    shmctl(oven_id, IPC_RMID, NULL);
-    shmctl(table_id, IPC_RMID, NULL);
+
+
     system("make clean");
     exit(0);
 
