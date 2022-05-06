@@ -1,10 +1,10 @@
+CC = gcc -Wall -std=gnu99 -ggdb
 
-CC = gcc
 
 main:
-	$(CC) cook.c -o cook
-	$(CC) deliveryman.c -o deliveryman
-	$(CC) shared.c -o shared
+	$(CC) cook.c -o cook -lm
+	$(CC) deliveryman.c -o deliveryman -lm
+	$(CC) shared.c -o shared -lm
 	./shared
 
 clean:

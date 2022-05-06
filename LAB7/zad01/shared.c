@@ -10,6 +10,13 @@ pid_t cooks_pids[NUM_OF_COOKS];
 pid_t deliverymen_pids[DELIVERYMEN];
 
 
+union semun {
+    int val;
+    struct semid_ds *buf;
+    unsigned short *array;
+    struct seminfo *__buf;
+};
+
 
 void set_semaphores() {
     key_t sem_key = ftok(PATHNAME, 'S');
@@ -24,13 +31,13 @@ void set_semaphores() {
 
     //oven semaphore
     if (semctl(semaphore_id, 0, SETVAL, oven_arg) == -1) {
-        perror("cannot initialize oven semaphore");
+        perror("cannot initialize semaphore 1");
         exit(EXIT_FAILURE);
     }
 
     //table semaphore
     if (semctl(semaphore_id, 1, SETVAL, table_arg) == -1) {
-        perror("cannot initialize table semaphore");
+        perror("cannot initialize semaphore 1");
         exit(EXIT_FAILURE);
     }
 
@@ -96,10 +103,8 @@ int main() {
     for(int i = 0; i < NUM_OF_COOKS; i++) {
 
         pid_t pid;
-        cooks_pids[i] = pid;
 
-        if ((pid==fork()) == 0) {
-
+        if ((pid=fork()) == 0) {
             execl("./cook", "cook", NULL);
         }
         else if (pid == -1) {
@@ -107,22 +112,17 @@ int main() {
             exit(EXIT_FAILURE);
         }
         else {
-
-            wait(NULL);
+            cooks_pids[i] = pid;
         }
         usleep(200000);
     }
-    for (int i = 0; i < NUM_OF_COOKS;i++) {
-        wait(NULL);
-    }
-    sleep(3);
+    sleep(1);
 
 
     for(int j = 0; j < DELIVERYMEN; j++) {
 
         pid_t pid;
-        deliverymen_pids[j] = pid;
-        if ((pid==fork()) == 0) {
+        if ((pid=fork()) == 0) {
 
             execl("./deliveryman", "deliveryman", NULL);
         }
@@ -131,9 +131,12 @@ int main() {
             exit(EXIT_FAILURE);
         }
         else {
-            wait(NULL);
+            deliverymen_pids[j] = pid;
         }
         sleep(1);
+    }
+    for (int i = 0; i < NUM_OF_COOKS;i++) {
+        wait(NULL);
     }
     for (int i = 0; i < DELIVERYMEN;i++) {
         wait(NULL);
