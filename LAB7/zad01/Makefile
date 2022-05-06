@@ -6,4 +6,6 @@ main:
 	$(CC) deliveryman.c -o deliveryman
 	$(CC) shared.c -o shared
 	./shared
-	#./cook
+
+clean:
+	rm deliveryman shared cook

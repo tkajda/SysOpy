@@ -1,6 +1,7 @@
 //
 // Created by tomasz on 05.05.22.
 //
+
 #include "shared.h"
 
 int table_id;
@@ -38,28 +39,47 @@ void get_and_deliver() {
 
     table *table = shmat(table_id,NULL, 0);
 
+    sembuf *unload_table = calloc(1, sizeof(sembuf));
+    unload_table->sem_op = -1;
+    unload_table->sem_num = -1;
+    unload_table->sem_flg = SEM_UNDO;
+
+    semop(semaphore_id, unload_table, 1);
+
     //take first prepared
-
     int i = 0;
-//    for(int j = 0; j < TABLE_SIZE; j++) {
-//        printf("%d   ", table->pizzas[j]);
-//    }
-//    printf("\n");
-
+    int pizza_type;
     for(; i < TABLE_SIZE; i++) {
         if (table->is_taken[i] == 1) {
             table->is_taken[i] = 0;
+            pizza_type =  table->pizzas[i];
+
+            //count pizzas left on the table
             int k = 0;
             for( int j = 0; j < TABLE_SIZE; j++) {
                 if (table->is_taken[j] == 1) k ++;
             }
             printf("(%d %ld) Pobieram pizze: %d. Liczba pizz na stole:%d\n",
-                   getpid(), time(NULL), table->pizzas[i], k);
+                   getpid(), time(NULL),pizza_type, k);
             break;
         }
     }
-    sleep(4);
-    printf("Dostarczam pizze: %d\n", table->pizzas[i]);
+
+    sembuf *unload_table1 = calloc(1, sizeof(sembuf));
+
+    unload_table1->sem_op = 1;
+    unload_table1->sem_num = 1;
+    unload_table1->sem_flg = SEM_UNDO;
+
+    semop(semaphore_id, unload_table1, 1);
+
+
+    sleep(5);
+    printf("(%d) Dostarczam pizze: %d\n",getpid(), pizza_type);
+    shmdt(table);
+
+    free(unload_table);
+    free(unload_table1);
 
 }
 
@@ -81,7 +101,6 @@ int main() {
     while(1) {
         get_and_deliver();
     }
-
 
     return 0;
 }

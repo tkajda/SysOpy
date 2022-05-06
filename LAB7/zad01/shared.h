@@ -18,8 +18,8 @@
 #include <time.h>
 
 
-#define NUM_OF_COOKS 5
-#define DELIVERYMEN 5
+#define NUM_OF_COOKS 2
+#define DELIVERYMEN 2
 #define TABLE_SIZE 5
 #define OVEN_SIZE 5
 

@@ -25,17 +25,18 @@ void set_semaphores() {
         perror("cannot create semaphore");
         exit(EXIT_FAILURE);
     }
-    union semun arg;
-    arg.val = 0;
+    union semun table_arg, oven_arg;
+    table_arg.val = TABLE_SIZE;
+    oven_arg.val = OVEN_SIZE;
 
     //oven semaphore
-    if (semctl(semaphore_id, 0, SETVAL, arg) == -1) {
+    if (semctl(semaphore_id, 0, SETVAL, oven_arg) == -1) {
         perror("cannot initialize semaphore 1");
         exit(EXIT_FAILURE);
     }
 
     //table semaphore
-    if (semctl(semaphore_id, 1, SETVAL, arg) == -1) {
+    if (semctl(semaphore_id, 1, SETVAL, table_arg) == -1) {
         perror("cannot initialize semaphore 1");
         exit(EXIT_FAILURE);
     }
@@ -57,7 +58,6 @@ void create_shared_memory() {
         perror("Cannot create shared memory\n");
         exit(EXIT_FAILURE);
     }
-//    shmat(table_id, NULL, 0);
 
     //oven block
     key_t oven_key = ftok(PATHNAME, 'O');
@@ -100,11 +100,7 @@ int main() {
     set_semaphores();
     create_shared_memory();
 
-
-
     printf("OVEN KEY MAIN %d\n", oven_id);
-
-
 
     for(int i = 0; i < NUM_OF_COOKS; i++) {
 
@@ -123,11 +119,12 @@ int main() {
 
             wait(NULL);
         }
-        sleep(1);
+        usleep(200000);
     }
     for (int i = 0; i < NUM_OF_COOKS;i++) {
         wait(NULL);
     }
+    sleep(3);
 
 
     for(int j = 0; j < DELIVERYMEN; j++) {
@@ -152,8 +149,8 @@ int main() {
     }
 
 
+    while(1) {}
 
-    sleep(15);
 
     return 0;
 }
