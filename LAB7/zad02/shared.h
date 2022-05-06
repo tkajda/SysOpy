@@ -27,7 +27,8 @@
 #define TABLE_SIZE 5
 #define OVEN_SIZE 5
 
-#define PATHNAME getenv("HOME")
+#define TABLE_SHARED_MEMORY "/TABLE_SHARED_MEMORY"
+#define OVEN_SHARED_MEMORY "/OVEN_SHARED_MEMORY"
 
 typedef struct sembuf sembuf;
 

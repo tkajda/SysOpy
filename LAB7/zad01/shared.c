@@ -26,8 +26,8 @@ void set_semaphores() {
         exit(EXIT_FAILURE);
     }
     union semun table_arg, oven_arg;
-    table_arg.val = TABLE_SIZE;
-    oven_arg.val = OVEN_SIZE;
+    table_arg.val = 1;
+    oven_arg.val = 1;
 
     //oven semaphore
     if (semctl(semaphore_id, 0, SETVAL, oven_arg) == -1) {
@@ -143,7 +143,7 @@ int main() {
     }
 
 
-    while(1) {}
+    while(1) { }
 
 
     return 0;

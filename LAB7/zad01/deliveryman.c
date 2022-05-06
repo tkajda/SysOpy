@@ -49,21 +49,26 @@ void get_and_deliver() {
     //take first prepared
     int i = 0;
     int pizza_type;
-    for(; i < TABLE_SIZE; i++) {
-        if (table->is_taken[i] == 1) {
-            table->is_taken[i] = 0;
-            pizza_type =  table->pizzas[i];
+    int flag = 0;
+    while(flag<1) {
+        for(; i < TABLE_SIZE; i++) {
+            if (table->is_taken[i] == 1) {
+                table->is_taken[i] = 0;
+                pizza_type =  table->pizzas[i];
 
-            //count pizzas left on the table
-            int k = 0;
-            for( int j = 0; j < TABLE_SIZE; j++) {
-                if (table->is_taken[j] == 1) k ++;
+                //count pizzas left on the table
+                int k = 0;
+                for( int j = 0; j < TABLE_SIZE; j++) {
+                    if (table->is_taken[j] == 1) k ++;
+                }
+                printf("(%d %ld) Pobieram pizze: %d. Liczba pizz na stole:%d\n",
+                       getpid(), time(NULL),pizza_type, k);
+                flag = 1;
+                break;
             }
-            printf("(%d %ld) Pobieram pizze: %d. Liczba pizz na stole:%d\n",
-                   getpid(), time(NULL),pizza_type, k);
-            break;
         }
     }
+
 
     sembuf *unload_table1 = calloc(1, sizeof(sembuf));
 

@@ -38,7 +38,7 @@ typedef struct {
 typedef struct {
     int pizzas[OVEN_SIZE];
     int last_taken;
-
+    int is_taken[OVEN_SIZE];
 } oven;
 
 

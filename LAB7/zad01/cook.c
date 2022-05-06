@@ -56,31 +56,45 @@ void place_in_oven() {
 
     oven *oven = shmat(oven_id, NULL, 0);
 
+
+    srand(time(NULL)  ^ (getpid()<<16) );
+
+    pizza_type = rand() % 10;
+    printf("(%d %ld) Przygotowuje pizze: %d\n", getpid(), time(NULL), pizza_type);
+    sleep(1);
     sembuf *load_oven = calloc(1, sizeof(sembuf));
+
     load_oven->sem_num = 0;
     load_oven->sem_op = -1;
     load_oven->sem_flg = SEM_UNDO;
 
     semop(semaphore_id, load_oven, 1);
 
-    srand(time(NULL)  ^ (getpid()<<16) );
+    int flag = 0;
+    while(flag < 1) {
+        for (int i = 0; i < OVEN_SIZE; i++) {
+            if (oven->is_taken[oven->last_taken%OVEN_SIZE] == 0) {
 
-    pizza_type = rand() % 10;
+                oven->is_taken[oven->last_taken%OVEN_SIZE] = 1;
+                oven->pizzas[oven->last_taken%OVEN_SIZE] = pizza_type;
 
-    sleep(1);
-    printf("(%d %ld) Przygotowuje pizze: %d\n", getpid(), time(NULL), pizza_type);
+                oven->is_taken[oven->last_taken%OVEN_SIZE] = 0;
+                oven->last_taken ++;
+                flag = 1;
+                break;
+            }
+        }
+    }
 
-
-    oven->pizzas[oven->last_taken%OVEN_SIZE] = pizza_type;
-    oven->last_taken ++;
-    sleep(4);
 
     sembuf *load_oven1 = calloc(1, sizeof(sembuf));
     load_oven1->sem_num = 0;
     load_oven1->sem_op = 1;
     load_oven1->sem_flg = SEM_UNDO;
-    semop(semaphore_id, load_oven1, 1);
 
+    sleep(4);
+
+    semop(semaphore_id, load_oven1, 1);
     shmdt(oven);
     free(load_oven);
     free(load_oven1);
@@ -99,10 +113,21 @@ void place_on_table() {
 
     printf("%d placing on table %d\n",getpid(),  table->last_taken%TABLE_SIZE);
 
+    int flag = 0;
+    while(flag<1) {
+        for(int i = 0 ; i < TABLE_SIZE; i++) {
+            if (table->is_taken[table->last_taken%TABLE_SIZE] == 0) {
 
-    table->is_taken[table->last_taken%TABLE_SIZE] = 1;
-    table->pizzas[table->last_taken%TABLE_SIZE] = pizza_type;
-    table->last_taken ++;
+                table->is_taken[table->last_taken%TABLE_SIZE] = 1;
+                table->pizzas[table->last_taken%TABLE_SIZE] = pizza_type;
+                table->last_taken ++;
+                flag = 1;
+
+                break;
+
+            }
+        }
+    }
 
 
     sembuf *load_table1 = calloc(1, sizeof(sembuf));

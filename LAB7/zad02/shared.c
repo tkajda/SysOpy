@@ -4,12 +4,11 @@
 
 #include "shared.h"
 
-int semaphore_id;
-int oven_id;
-int table_id;
+
 pid_t cooks_pids[NUM_OF_COOKS];
 pid_t deliverymen_pids[DELIVERYMEN];
-
+int oven_memory;
+int table_memory;
 
 union semun {
     int val;
@@ -21,10 +20,45 @@ union semun {
 
 void set_semaphores() {
 
+    sem_t *sem = sem_open("/TABLE", O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO, TABLE_SIZE);
+
+    if (sem == SEM_FAILED) {
+        printf("Cannot create first semaphore\n");
+        exit(EXIT_FAILURE);
+    }
+
+    sem_close(sem);
+    sem = sem_open("/OVEN", O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO, OVEN_SIZE);
+    if (sem == SEM_FAILED) {
+        printf("Cannot create second semaphore\n");
+        exit(EXIT_FAILURE);
+    }
+    sem_close(sem);
 }
 
 
 void create_shared_memory() {
+
+    int fd = shm_open(OVEN_SHARED_MEMORY, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO);
+    if (fd == -1) {
+        perror("Cannot create oven shared memory\n");
+        exit(EXIT_FAILURE);
+    }
+    if (ftruncate(fd, sizeof(oven)) == -1 ) {
+        printf("Cannot initialize oven segment size\n");
+        exit(EXIT_FAILURE);
+    }
+
+
+    int fd1 = shm_open(TABLE_SHARED_MEMORY, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO);
+    if (fd1 == -1) {
+        perror("Cannot create table shared memory\n");
+        exit(EXIT_FAILURE);
+    }
+    if (ftruncate(fd1, sizeof(table)) == -1 ) {
+        printf("Cannot initialize table segment size\n");
+        exit(EXIT_FAILURE);
+    }
 
 }
 
@@ -37,7 +71,10 @@ void handle_sigint() {
     for (int j = 0; j < DELIVERYMEN; j++){
         kill(deliverymen_pids[j], SIGINT);
     }
-
+    sem_unlink("/OVEN");
+    sem_unlink("/TABLE");
+    shm_unlink(TABLE_SHARED_MEMORY);
+    shm_unlink(OVEN_SHARED_MEMORY);
     system("make clean");
     exit(0);
 
@@ -51,6 +88,7 @@ int main() {
 
     set_semaphores();
     create_shared_memory();
+
 
     for(int i = 0; i < NUM_OF_COOKS; i++) {
 
@@ -71,7 +109,6 @@ int main() {
     }
 
     sleep(1);
-
 
     for(int j = 0; j < DELIVERYMEN; j++) {
 
