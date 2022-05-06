@@ -20,7 +20,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <pthread.h>
-
+#include <sys/mman.h>
 
 #define NUM_OF_COOKS 2
 #define DELIVERYMEN 2

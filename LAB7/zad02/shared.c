@@ -1,6 +1,7 @@
 //
 // Created by tomasz on 06.05.22.
 //
+
 #include "shared.h"
 
 int semaphore_id;
@@ -10,16 +11,20 @@ pid_t cooks_pids[NUM_OF_COOKS];
 pid_t deliverymen_pids[DELIVERYMEN];
 
 
+union semun {
+    int val;
+    struct semid_ds *buf;
+    unsigned short *array;
+    struct seminfo *__buf;
+};
+
 
 void set_semaphores() {
-
-
 
 }
 
 
 void create_shared_memory() {
-
 
 }
 
@@ -32,7 +37,6 @@ void handle_sigint() {
     for (int j = 0; j < DELIVERYMEN; j++){
         kill(deliverymen_pids[j], SIGINT);
     }
-
 
     system("make clean");
     exit(0);
@@ -51,9 +55,7 @@ int main() {
     for(int i = 0; i < NUM_OF_COOKS; i++) {
 
         pid_t pid;
-        cooks_pids[i] = pid;
-
-        if ((pid==fork()) == 0) {
+        if ((pid=fork()) == 0) {
 
             execl("./cook", "cook", NULL);
         }
@@ -62,22 +64,19 @@ int main() {
             exit(EXIT_FAILURE);
         }
         else {
+            cooks_pids[i] = pid;
 
-            wait(NULL);
         }
         usleep(200000);
     }
-    for (int i = 0; i < NUM_OF_COOKS;i++) {
-        wait(NULL);
-    }
-    sleep(3);
+
+    sleep(1);
 
 
     for(int j = 0; j < DELIVERYMEN; j++) {
 
         pid_t pid;
-        deliverymen_pids[j] = pid;
-        if ((pid==fork()) == 0) {
+        if ((pid=fork()) == 0) {
 
             execl("./deliveryman", "deliveryman", NULL);
         }
@@ -86,9 +85,12 @@ int main() {
             exit(EXIT_FAILURE);
         }
         else {
-            wait(NULL);
+            deliverymen_pids[j] = pid;
         }
-        sleep(1);
+        usleep(200000);
+    }
+    for (int i = 0; i < NUM_OF_COOKS;i++) {
+        wait(NULL);
     }
     for (int i = 0; i < DELIVERYMEN;i++) {
         wait(NULL);
