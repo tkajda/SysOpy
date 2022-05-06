@@ -71,7 +71,6 @@ void place_in_oven() {
     printf("(%d %ld) Przygotowuje pizze: %d\n", getpid(), time(NULL), pizza_type);
 
 
-
     oven->pizzas[oven->last_taken%OVEN_SIZE] = pizza_type;
     oven->last_taken ++;
 

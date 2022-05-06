@@ -100,8 +100,6 @@ int main() {
     set_semaphores();
     create_shared_memory();
 
-    printf("OVEN KEY MAIN %d\n", oven_id);
-
     for(int i = 0; i < NUM_OF_COOKS; i++) {
 
         pid_t pid;
