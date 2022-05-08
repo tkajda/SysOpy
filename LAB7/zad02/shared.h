@@ -43,8 +43,12 @@ typedef struct {
 typedef struct {
     int pizzas[OVEN_SIZE];
     int last_taken;
+    int is_taken[OVEN_SIZE];
 
 } oven;
 
+#define rand_range(a, b) (rand() % (b + 1 - a) + a)
+
+#define rand_sleep(a, b) usleep(rand_range(a * 1000000, b * 1000000));
 
 #endif //LAB7_SHARED_H

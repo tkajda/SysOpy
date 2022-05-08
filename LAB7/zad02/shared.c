@@ -39,23 +39,23 @@ void set_semaphores() {
 
 void create_shared_memory() {
 
-    int fd = shm_open(OVEN_SHARED_MEMORY, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO);
-    if (fd == -1) {
+    oven_memory = shm_open(OVEN_SHARED_MEMORY, O_RDWR | O_CREAT, 0666);
+    if (oven_memory == -1) {
         perror("Cannot create oven shared memory\n");
         exit(EXIT_FAILURE);
     }
-    if (ftruncate(fd, sizeof(oven)) == -1 ) {
+    if (ftruncate(oven_memory, sizeof(oven)) == -1 ) {
         printf("Cannot initialize oven segment size\n");
         exit(EXIT_FAILURE);
     }
 
 
-    int fd1 = shm_open(TABLE_SHARED_MEMORY, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO);
-    if (fd1 == -1) {
+    table_memory = shm_open(TABLE_SHARED_MEMORY, O_RDWR | O_CREAT, 0666);
+    if (table_memory == -1) {
         perror("Cannot create table shared memory\n");
         exit(EXIT_FAILURE);
     }
-    if (ftruncate(fd1, sizeof(table)) == -1 ) {
+    if (ftruncate(table_memory, sizeof(table)) == -1 ) {
         printf("Cannot initialize table segment size\n");
         exit(EXIT_FAILURE);
     }

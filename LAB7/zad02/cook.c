@@ -47,32 +47,97 @@ void initialize_shared_memory() {
 
 
 void place_in_oven() {
-
-    oven *ove = mmap(NULL,
+    oven *oven = mmap(NULL,
                      sizeof(oven),
                      PROT_READ | PROT_WRITE,
                      MAP_SHARED,
                      oven_memory,
                      0);
 
-    if (ove ==  (void *) -1) {
+    if (oven ==  (void *) -1) {
         perror("Cannot mmap oven");
         exit(EXIT_FAILURE);
     }
+    pizza_type = rand() % 10;
+    printf("(%d %ld) Przygotowuje pizze: %d\n", getpid(), time(NULL), pizza_type);
+    sleep(1, 2);
 
+    if(sem_wait(oven_semaphore) == -1){
+        perror("Cannot wait for oven in cook");
+        exit(EXIT_FAILURE);
+    }
 
+    int flag = 0;
+    while(flag < 1) {
+        for (int i = 0; i < OVEN_SIZE; i++) {
+            if (oven->is_taken[oven->last_taken%OVEN_SIZE] == 0) {
+
+                oven->is_taken[oven->last_taken%OVEN_SIZE] = 1;
+                oven->pizzas[oven->last_taken%OVEN_SIZE] = pizza_type;
+
+                oven->is_taken[oven->last_taken%OVEN_SIZE] = 0;
+                oven->last_taken ++;
+                flag = 1;
+                break;
+            }
+        }
+    }
+
+    if(sem_post(oven_semaphore) == -1){
+        perror("Cannot post for oven in cook");
+        exit(EXIT_FAILURE);
+    }
+
+    rand_sleep(4, 5);
+
+    munmap(oven, sizeof(oven));
 }
 
+
 void place_on_table() {
+    table *table = mmap(NULL,
+                      sizeof(table),
+                      PROT_READ | PROT_WRITE,
+                      MAP_SHARED,
+                        table_memory,
+                      0);
 
+    if (table ==  (void *) -1) {
+        perror("Cannot mmap oven");
+        exit(EXIT_FAILURE);
+    }
+    printf("%d placing on table %d\n",getpid(),  table->last_taken%TABLE_SIZE);
 
+    if(sem_wait(table_semaphore) == -1){
+        perror("Cannot wait for table in cook");
+        exit(EXIT_FAILURE);
+    }
 
+    int flag = 0;
+    while(flag<1) {
+        for(int i = 0 ; i < TABLE_SIZE; i++) {
+            if (table->is_taken[table->last_taken%TABLE_SIZE] == 0) {
 
+                table->is_taken[table->last_taken%TABLE_SIZE] = 1;
+                table->pizzas[table->last_taken%TABLE_SIZE] = pizza_type;
+                table->last_taken ++;
+                flag = 1;
+
+                break;
+
+            }
+        }
+    }
+    if(sem_post(table_semaphore) == -1){
+        perror("Cannot post for table in cook");
+        exit(EXIT_FAILURE);
+    }
+
+    munmap(table, sizeof(table));
 }
 
 
 void handle_sigint() {
-
     exit(0);
 }
 
