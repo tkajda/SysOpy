@@ -79,7 +79,7 @@ void get_and_deliver() {
     semop(semaphore_id, unload_table1, 1);
 
 
-    sleep(5);
+    rand_sleep(4,5);
     printf("(%d) Dostarczam pizze: %d\n",getpid(), pizza_type);
     shmdt(table);
 

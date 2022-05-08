@@ -116,7 +116,7 @@ int main() {
         }
         usleep(200000);
     }
-    sleep(1);
+    rand_sleep(1,2);
 
 
     for(int j = 0; j < DELIVERYMEN; j++) {
@@ -133,7 +133,7 @@ int main() {
         else {
             deliverymen_pids[j] = pid;
         }
-        sleep(1);
+        rand_sleep(1,2);
     }
     for (int i = 0; i < NUM_OF_COOKS;i++) {
         wait(NULL);

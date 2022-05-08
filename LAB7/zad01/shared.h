@@ -42,6 +42,7 @@ typedef struct {
 } oven;
 
 
-
+#define rand_range(a, b) (rand() % (b + 1 - a) + a)
+#define rand_sleep(a, b) usleep(rand_range(a * 1000000, b * 1000000));
 
 #endif //ZAD01_SHARED_H

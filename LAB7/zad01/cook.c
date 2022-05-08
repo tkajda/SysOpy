@@ -61,7 +61,7 @@ void place_in_oven() {
 
     pizza_type = rand() % 10;
     printf("(%d %ld) Przygotowuje pizze: %d\n", getpid(), time(NULL), pizza_type);
-    sleep(1);
+    rand_sleep(1, 2);
     sembuf *load_oven = calloc(1, sizeof(sembuf));
 
     load_oven->sem_num = 0;
@@ -92,7 +92,7 @@ void place_in_oven() {
     load_oven1->sem_op = 1;
     load_oven1->sem_flg = SEM_UNDO;
 
-    sleep(4);
+    rand_sleep(4, 5);
 
     semop(semaphore_id, load_oven1, 1);
     shmdt(oven);
