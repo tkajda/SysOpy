@@ -22,13 +22,16 @@
 #include <pthread.h>
 #include <sys/mman.h>
 
-#define NUM_OF_COOKS 2
-#define DELIVERYMEN 2
+#define NUM_OF_COOKS 6
+#define DELIVERYMEN 8
 #define TABLE_SIZE 5
 #define OVEN_SIZE 5
 
 #define TABLE_SHARED_MEMORY "/TABLE_SHARED_MEMORY"
 #define OVEN_SHARED_MEMORY "/OVEN_SHARED_MEMORY"
+#define TABLE_SEMAPHORE "/TABLE"
+#define OVEN_SEMAPHORE "/OVEN"
+
 
 typedef struct sembuf sembuf;
 

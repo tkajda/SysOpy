@@ -13,13 +13,13 @@ int table_memory;
 
 
 void set_semaphores() {
-    table_semaphore = sem_open("/TABLE", O_RDWR);
+    table_semaphore = sem_open(TABLE_SEMAPHORE, O_RDWR);
     if (table_semaphore == SEM_FAILED) {
         perror("Cannot open table semaphore");
         exit(EXIT_FAILURE);
     }
 
-    oven_semaphore = sem_open("/OVEN", O_RDWR);
+    oven_semaphore = sem_open(OVEN_SEMAPHORE, O_RDWR);
     if (oven_semaphore == SEM_FAILED) {
         perror("Cannot open oven semaphore");
         exit(EXIT_FAILURE);
@@ -58,9 +58,13 @@ void place_in_oven() {
         perror("Cannot mmap oven");
         exit(EXIT_FAILURE);
     }
+
+
+    srand(time(NULL)  ^ (getpid()<<16) );
     pizza_type = rand() % 10;
+
     printf("(%d %ld) Przygotowuje pizze: %d\n", getpid(), time(NULL), pizza_type);
-    sleep(1, 2);
+    rand_sleep(1, 2);
 
     if(sem_wait(oven_semaphore) == -1){
         perror("Cannot wait for oven in cook");
@@ -103,9 +107,10 @@ void place_on_table() {
                       0);
 
     if (table ==  (void *) -1) {
-        perror("Cannot mmap oven");
+        perror("Cannot mmap table");
         exit(EXIT_FAILURE);
     }
+    usleep(100000);
     printf("%d placing on table %d\n",getpid(),  table->last_taken%TABLE_SIZE);
 
     if(sem_wait(table_semaphore) == -1){
@@ -117,17 +122,16 @@ void place_on_table() {
     while(flag<1) {
         for(int i = 0 ; i < TABLE_SIZE; i++) {
             if (table->is_taken[table->last_taken%TABLE_SIZE] == 0) {
-
                 table->is_taken[table->last_taken%TABLE_SIZE] = 1;
                 table->pizzas[table->last_taken%TABLE_SIZE] = pizza_type;
                 table->last_taken ++;
                 flag = 1;
-
                 break;
 
             }
         }
     }
+
     if(sem_post(table_semaphore) == -1){
         perror("Cannot post for table in cook");
         exit(EXIT_FAILURE);
@@ -138,6 +142,10 @@ void place_on_table() {
 
 
 void handle_sigint() {
+    sem_close(table_semaphore);
+    sem_close(oven_semaphore);
+    shm_unlink(TABLE_SHARED_MEMORY);
+    shm_unlink(OVEN_SHARED_MEMORY);
     exit(0);
 }
 
